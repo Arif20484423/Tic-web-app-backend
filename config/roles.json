@@ -1,0 +1,27 @@
+{
+    "roles":[
+        {
+            "name":"tic",
+            "permissions":[
+                "function3",
+                "function2"
+            ]
+        },
+        {
+            "name":"tap",
+            "permissions":[
+                "function1",
+                "function2"
+            ]
+        },
+        {
+            "name":"student",
+            "permissions":[
+                "function1",
+                "function2"
+            ]
+        }
+        
+
+    ]
+}
