@@ -1,0 +1,17 @@
+const mongoose = require("mongoose");
+
+function connectDb() {
+  return new Promise((resolve, reject) => {
+    mongoose
+      .connect(process.env.DB_URI)
+      .then(() => {
+        resolve("Db Connected");
+      })
+      .catch((err) => {
+        console.log("ksbd");
+        reject(err);
+      });
+  });
+}
+
+module.exports = connectDb;

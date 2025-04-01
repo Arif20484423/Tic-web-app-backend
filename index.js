@@ -1,14 +1,19 @@
-const express = require("express");
-const { getPermissions } = require("./models/permissions");
-const { getRole } = require("./models/role");
-const app = express();
+require("dotenv").config();
+const {app} = require("./app")
+const connectDb = require("./db/connect-db");
 
-console.log(getPermissions("ta"));
+connectDb()
+  .then((result) => {
+    console.log(result);
+    app.listen(4000, () => {
+      console.log("Server started at port 4000");
+    });
+  })
+  .catch((err) => {
+    console.log("Error connecting database");
+  });
 
-app.get("/", (req, res) => {
-  res.send("Hello Tic WEB App Backend");
-});
 
-app.listen(4000, () => {
-  console.log("Server started at port 4000");
-});
+
+
+
