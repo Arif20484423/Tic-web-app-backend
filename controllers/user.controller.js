@@ -1,8 +1,8 @@
-const { validationResult } = require('express-validator');
-var jwt = require('jsonwebtoken');
+import {validationResult} from "express-validator"
+import jwt from "jsonwebtoken"
 
 
-function userLogin(req,res){
+export function userLogin(req,res){
     const result = validationResult(req);
     if(result.isEmpty()){
         res.status(200).send("Hey yup")
@@ -13,4 +13,4 @@ function userLogin(req,res){
     }
 }
 
-module.exports = { userLogin }
+

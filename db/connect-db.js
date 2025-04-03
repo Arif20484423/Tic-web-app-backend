@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-function connectDb() {
+export function connectDb() {
   return new Promise((resolve, reject) => {
     mongoose
       .connect(process.env.DB_URI)
@@ -13,5 +13,3 @@ function connectDb() {
       });
   });
 }
-
-module.exports = connectDb;
