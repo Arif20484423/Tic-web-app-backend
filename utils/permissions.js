@@ -1,9 +1,11 @@
-const roles = require("../config/roles.json");
-const { getRole } = require("./role");
+import roles from "../config/roles.json"
+import {getRole } from "./role.js"
 
-function getPermissions(role) {
+
+
+export function getPermissions(role) {
   var role_permissions = getRole(role);
   return role_permissions ? role_permissions.permissions : [];
 }
 
-module.exports = { getPermissions };
+
