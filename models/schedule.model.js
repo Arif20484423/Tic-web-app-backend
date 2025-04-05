@@ -26,4 +26,4 @@ const schedule = mongoose.Schema({
 
 });
 
-export default mongoose.model("Batch", batchSchema);
+export default mongoose.model("Schedule", batchSchema);
