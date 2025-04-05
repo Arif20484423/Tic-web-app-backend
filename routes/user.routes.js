@@ -5,18 +5,20 @@ import {
   userRegister,
   userBatch,
 } from "../controllers/user.controller.js";
-import { authenticateUser } from "../middlewares/auth.middleware.js";
+import { authenticateUser, refreshAccessToken } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 router.post(
   "/login",
-  body("rollno").exists().trim().notEmpty(),
+  body("rollNumber").exists().trim().notEmpty(),
   body("password").trim().isLength({ min: 6 }),
   userLogin
 );
 router.use(authenticateUser);
+router.use(refreshAccessToken);
 router.get("/", (req, res) => {
+  // console.log(req);
   res.send("home");
 });
 

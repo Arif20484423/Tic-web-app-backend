@@ -2,29 +2,43 @@ import { validationResult, matchedData } from "express-validator";
 import Person from "../models/person.model.js";
 import Student from "../models/student.model.js";
 import Batch from "../models/batch.model.js";
-import { generateAccessToken } from "../utils/tokens.js";
-import { getUser } from "../utils/tokens.js";
+import { generateAccessToken, generateRefreshToken } from "../utils/tokens.js";
+
+
+
+export  function mapToken(user){
+  return generateAccessToken({
+    id: user._id,
+    rollNumber: user.rollNumber,
+    role: user.role,
+  })
+}
 export async function userLogin(req, res) {
   const result = validationResult(req);
   if (result.isEmpty()) {
     const data = matchedData(req);
     try {
-      const student = await Student.findOne({ rollNumber: data.rollno });
+      const student = await Student.findOne({ rollNumber: data.rollNumber });
       if (student) {
         if (student.comparePassword(data.password)) {
-          const token = generateAccessToken({
-            rollno: student.rollNumber,
-            role: student.role,
+          const token = mapToken(student)
+          const refreshToken = generateRefreshToken({
+            id: student._id,
           });
+          await Student.findByIdAndUpdate(student._id, {
+            refreshToken: refreshToken,
+          });
+          const options = { httpOnly: true, secure: true };
           return res
             .status(200)
-            .cookie("token", token, { httpOnly: true, secure: true })
+            .cookie("token", token, options)
+            .cookie("refreshToken",refreshToken,options)
             .json("logged in");
         } else {
           return res.status(400).send({ messge: "Wrong Password" });
         }
       } else {
-        return res.redirect("http://localhost:4000/api/v1/users");
+        return res.status(400).send({ messge: "Invalid details" });
       }
     } catch (error) {
       console.error("Error Occured at userLogin ", error);

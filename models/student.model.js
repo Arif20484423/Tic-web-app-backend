@@ -45,6 +45,9 @@ const studentSchema = mongoose.Schema({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
     ],
   },
+  refreshToken:{
+    type:String
+  },
   languages: {
     type: [String],
     default: [],
