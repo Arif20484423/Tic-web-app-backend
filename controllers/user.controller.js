@@ -4,6 +4,8 @@ import Student from "../models/student.model.js";
 import Batch from "../models/batch.model.js";
 import { generateAccessToken } from "../utils/tokens.js";
 import { getUser } from "../utils/tokens.js";
+import { userBatchEntry, uploadMiddleware } from "../services/user.service.js";
+
 export async function userLogin(req, res) {
   const result = validationResult(req);
   if (result.isEmpty()) {
@@ -62,3 +64,8 @@ export async function userBatch(re, res) {
   });
   res.send("created");
 }
+
+export const batchEntry = [
+  uploadMiddleware,  
+  userBatchEntry,  
+];
