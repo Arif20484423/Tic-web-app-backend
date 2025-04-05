@@ -1,9 +1,9 @@
-const  express = require("express")
-const cookieParser = require("cookie-parser")
-const userRouter = require("./routes/user.routes")
+import express from "express"
+import cookieParser  from "cookie-parser"
+import userRouter from "./routes/user.routes.js"
+import { authenticateUser } from "./middlewares/auth.middleware.js"
 
-
-const app = express()
+export const app = express()
 
 
 app.use(express.json())
@@ -12,7 +12,7 @@ app.use(cookieParser())
 
 
 
+
 app.use("/api/v1/users",userRouter)
 
 
-module.exports = { app }    
