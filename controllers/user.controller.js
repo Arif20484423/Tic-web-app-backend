@@ -2,6 +2,12 @@ import { validationResult, matchedData } from "express-validator";
 import Person from "../models/person.model.js";
 import Student from "../models/student.model.js";
 import Batch from "../models/batch.model.js";
+
+
+import { getUser } from "../utils/tokens.js";
+import { userBatchEntry, uploadMiddleware } from "../services/user.service.js";
+
+
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens.js";
 
 export function mapToken(user) {
@@ -11,6 +17,7 @@ export function mapToken(user) {
     role: user.role,
   });
 }
+
 export async function userLogin(req, res) {
   const result = validationResult(req);
   if (result.isEmpty()) {
@@ -75,6 +82,12 @@ export async function userBatch(re, res) {
   res.send("created");
 }
 
+
+export const batchEntry = [
+  uploadMiddleware,  
+  userBatchEntry,  
+];
+
 export async function getUserDetails(req, res, next) {
   const user = await Student.findById(req.id, "-password -refreshToken -role")
     .populate("person")
@@ -109,3 +122,4 @@ export async function setUserDetails(req, res) {
 
   res.json(req.body);
 }
+
