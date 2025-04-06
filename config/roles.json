@@ -1,24 +1,24 @@
 {
     "roles":[
         {
-            "name":"tic",
+            "name":"TAP",
             "permissions":[
                 "function3",
                 "function2"
             ]
         },
         {
-            "name":"tap",
+            "name":"TIC",
             "permissions":[
                 "function1",
                 "function2"
             ]
         },
         {
-            "name":"student",
+            "name":"Student",
             "permissions":[
-                "function1",
-                "function2"
+                "getUserDetails",
+                "setUserDetails"
             ]
         }
         
