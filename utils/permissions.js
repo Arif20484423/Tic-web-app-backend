@@ -1,5 +1,4 @@
 
-import roles from "../config/roles.json"
 import {getRole } from "./role.js"
 
 

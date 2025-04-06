@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
 const RoleEnum = {
   STUDENT: "Student",
   TAP: "TAP",
@@ -30,7 +30,7 @@ const studentSchema = mongoose.Schema({
   collegeEmail: {
     type: String,
     unique: true,
-    sparse:true,
+    sparse: true,
     lowercase: true,
     trim: true,
     match: [
@@ -41,9 +41,9 @@ const studentSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
-    match: [
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-    ],
+  },
+  refreshToken: {
+    type: String,
   },
   languages: {
     type: [String],
@@ -80,21 +80,33 @@ const studentSchema = mongoose.Schema({
   },
 });
 
-studentSchema.pre("save",function (next){
-  if(this.isNew ||  this.isModified("password")){
+studentSchema.pre("save", function (next) {
+  if (this.isNew) {
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    console.log("checkinh");
+    // console.log(this.password)
+    if (!passwordRegex.test(this.password)) {
+      console.log("checkednotok");
+      return next(
+        new Error(
+          "Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character and be at least 6 characters long."
+        )
+      );
+    }
+    console.log("checkedok");
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(this.password,salt)
-    this.set("password",hash)
+    const hash = bcrypt.hashSync(this.password, salt);
+    this.set("password", hash);
   }
-  next()
-})
-studentSchema.method("comparePassword",function (password){
-   if(bcrypt.compareSync(password,this.password)){
-    return true;
-   }
-   else{
-    return false;
-   }
+  next();
+});
 
-})
-export default mongoose.model("Student" , studentSchema);
+studentSchema.method("comparePassword", function (password) {
+  if (bcrypt.compareSync(password, this.password)) {
+    return true;
+  } else {
+    return false;
+  }
+});
+export default mongoose.model("Student", studentSchema);
