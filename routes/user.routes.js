@@ -4,8 +4,10 @@ import {
   userLogin,
   userRegister,
   userBatch,
+  getUserDetails,
+  setUserDetails,
 } from "../controllers/user.controller.js";
-import { authenticateUser, refreshAccessToken } from "../middlewares/auth.middleware.js";
+import { authenticateUser, checkPermission, refreshAccessToken } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -22,6 +24,8 @@ router.get("/", (req, res) => {
   res.send("home");
 });
 
+router.get("/details", checkPermission("getUserDetails"), getUserDetails);
+router.post("/details", checkPermission("setUserDetails"), body("personid").exists().trim().notEmpty(), body("studentid").exists().trim().notEmpty(), body("person").exists(), body("student").exists(), setUserDetails);
 router.get("/x", (req, res) => {
   res.redirect("http://localhost:4000/api/v1/users");
 });
