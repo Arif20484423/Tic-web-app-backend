@@ -13,7 +13,7 @@ export const mail = async (subject, content, destination) => {
       from: process.env.EMAIL_USER, 
       to: destination, 
       subject: subject, 
-      text: content, 
+      html:content
     };
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent: " + info.response);

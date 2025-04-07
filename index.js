@@ -12,3 +12,5 @@ connectDb()
   .catch((err) => {
     console.log("Error connecting database");
   });
+
+
