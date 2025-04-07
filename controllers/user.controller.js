@@ -2,13 +2,13 @@ import { validationResult, matchedData } from "express-validator";
 import Person from "../models/person.model.js";
 import Student from "../models/student.model.js";
 import Batch from "../models/batch.model.js";
-
-
-import { getUser } from "../utils/tokens.js";
+import bcrypt from "bcryptjs";
+import ForgotToken from "../models/forgot-token.model.js";
+import crypto from "crypto";
 import { userBatchEntry, uploadMiddleware } from "../services/user.service.js";
 
-
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens.js";
+import { mail } from "../utils/Mail.js";
 
 export function mapToken(user) {
   return generateAccessToken({
@@ -38,19 +38,26 @@ export async function userLogin(req, res) {
             .status(200)
             .cookie("token", token, options)
             .cookie("refreshToken", refreshToken, options)
-            .json("logged in");
+            .json({ success: true, message: "logged in" });
         } else {
-          return res.status(400).send({ message: "Wrong Password" });
+          return res
+            .status(400)
+            .json({ success: false, message: "Wrong Password" });
         }
       } else {
-        return res.status(400).send({ message: "Invalid details" });
+        return res
+          .status(400)
+          .json({ success: false, message: "User does not exists" });
       }
     } catch (error) {
-      console.error("Error Occured at userLogin ", error);
-      return res.status(400).json({ message: "Some Error Occured" });
+      return res
+        .status(500)
+        .json({ success: false, message: "Some Error Occured", error: error });
     }
   } else {
-    res.status(400).send({ message: "Invalid details provided" });
+    res
+      .status(400)
+      .json({ success: false, message: "Invalid details provided" });
   }
 }
 
@@ -82,17 +89,19 @@ export async function userBatch(re, res) {
   res.send("created");
 }
 
-
-export const batchEntry = [
-  uploadMiddleware,  
-  userBatchEntry,  
-];
+export const batchEntry = [uploadMiddleware, userBatchEntry];
 
 export async function getUserDetails(req, res, next) {
-  const user = await Student.findById(req.id, "-password -refreshToken -role")
-    .populate("person")
-    .populate("batch");
-  res.status(200).json({ data: user });
+  try {
+    const user = await Student.findById(req.id, "-password -refreshToken -role")
+      .populate("person")
+      .populate("batch");
+    return res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "some error occurred", error: error });
+  }
 }
 export async function setUserDetails(req, res) {
   const result = validationResult(req);
@@ -102,24 +111,144 @@ export async function setUserDetails(req, res) {
       const person = data.person;
       const student = data.student;
       try {
-        await Person.findByIdAndUpdate({ _id: data.personid }, person,{runValidators:true});
-        await Student.findByIdAndUpdate({ _id: data.studentid }, student,{runValidators:true});
-        return res.status(200).json({ message: "details updated successflly" });
+        await Person.findByIdAndUpdate({ _id: data.personid }, person, {
+          runValidators: true,
+        });
+        await Student.findByIdAndUpdate({ _id: data.studentid }, student, {
+          runValidators: true,
+        });
+        return res
+          .status(200)
+          .json({ success: true, message: "details updated successflly" });
       } catch (error) {
-        return res.status(400).json({
+        return res.status(500).json({
+          success: false,
           message: "Some error occured updating information",
           error: error,
         });
       }
     } else {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized Access to Change User Information" });
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized Access to Change User Information",
+      });
     }
   } else {
-    return res.status(400).json({ messsage: "Invalid details provided" });
+    return res
+      .status(400)
+      .json({ success: false, messsage: "Invalid details provided" });
   }
-
-  res.json(req.body);
 }
 
+export async function userSendMail(req, res) {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    const user = await Student.findOne({ rollNumber: data.rollNumber });
+    if (user) {
+      try {
+        // return res.send(data.rollNumber)
+        const tokenExists = await ForgotToken.findOne({
+          rollNumber: data.rollNumber,
+        });
+        if (tokenExists) {
+          await ForgotToken.deleteOne({ rollNumber: data.rollNumber });
+        }
+        const token = crypto.randomBytes(20).toString("hex");
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(token, salt);
+        await ForgotToken.create({
+          rollNumber: data.rollNumber,
+          token: hash,
+        });
+        const link =
+          process.env.RESET_URL +
+          "?user=" +
+          data.rollNumber +
+          "&token=" +
+          token;
+        const content = `<div><p>We received a request to reset your password. Click the link below to choose a new password</p><a href=${link}>click here</a></div>`;
+        const linkMail = await mail(
+          "Reset Password Link",
+          content,
+          user.collegeEmail
+        );
+
+        if (linkMail.success) {
+          return res.status(200).json({
+            success: true,
+            message: "Reset Link send to email " + user.collegeEmail,
+          });
+        } else {
+          return res
+            .status(500)
+            .json({ success: false, message: "error sending mail" });
+        }
+      } catch (error) {
+        return res.status(500).json({
+          success: false,
+          message: "Some error occurred sending mail",
+          error: error,
+        });
+      }
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, message: "user does not exists" });
+    }
+  } else {
+    return res.status(400).json({ success: false, message: "Invalid details" });
+  }
+}
+
+export async function userResetPassword(req, res) {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    try {
+      const user = await Student.findOne({ rollNumber: data.user });
+      if (user) {
+        const forgotToken = await ForgotToken.findOne({
+          rollNumber: data.user,
+        });
+        if (forgotToken) {
+          const now = Date.now();
+          const created = new Date(forgotToken.createdAt).getTime();
+          if (now - created <= 60 * 60 * 1000) {
+            if (bcrypt.compareSync(data.token, forgotToken.token)) {
+              user.password = data.password;
+              await user.save();
+              await ForgotToken.deleteOne({ rollNumber: data.user });
+              return res.status(200).json({
+                success: true,
+                message: "password updated successfully",
+              });
+            } else {
+              return res
+                .status(400)
+                .json({ success: false, message: "Link Expired" });
+            }
+          } else {
+            return res
+              .status(400)
+              .json({ success: false, message: "Link Expired" });
+          }
+        } else {
+          return res
+            .status(400)
+            .json({ success: false, message: "Link Expired" });
+        }
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid user" });
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ success: false, message: "some error occurred", error: error });
+    }
+  } else {
+    return res.status(400).json({ success: false, message: "invalid link" });
+  }
+}

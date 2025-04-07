@@ -81,9 +81,9 @@ const studentSchema = mongoose.Schema({
 });
 
 studentSchema.pre("save", function (next) {
-  if (this.isNew) {
+  if (this.isNew || this.isModified("password")) {
     const passwordRegex =
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/;
     console.log("checkinh");
     // console.log(this.password)
     if (!passwordRegex.test(this.password)) {
