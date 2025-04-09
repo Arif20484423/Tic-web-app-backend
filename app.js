@@ -9,7 +9,7 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cors from "cors"
 const __dirname = dirname(fileURLToPath(import.meta.url));
-app.use(cors());
+app.use(cors({origin:"http://localhost:3000",credentials:true}));
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())

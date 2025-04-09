@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export function connectDb() {
   return new Promise((resolve, reject) => {
     mongoose
-      .connect(process.env.DB_URI+"/tic")
+      .connect(process.env.DB_URI)
       .then(() => {
         resolve("Db Connected");
       })
