@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 const RoleEnum = {
   STUDENT: "Student",
-  TAP: "TAP",
-  TIC: "TIC",
+  TAP: "Tap",
+  TIC: "Tic",
 };
 
 const studentSchema = mongoose.Schema({
@@ -84,29 +84,30 @@ studentSchema.pre("save", function (next) {
   if (this.isNew || this.isModified("password")) {
     const passwordRegex =
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/;
-    console.log("checkinh");
-    // console.log(this.password)
+
     if (!passwordRegex.test(this.password)) {
-      console.log("checkednotok");
-      return next(
-        new Error(
-          "Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character and be at least 6 characters long."
-        )
+      const error = new mongoose.Error.ValidationError(this);
+      error.addError(
+        "password",
+        new mongoose.Error.ValidatorError({
+          message:
+            "Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character and be at least 6 characters long.",
+          path: "password",
+          value: this.password,
+        })
       );
+      return next(error);
     }
-    console.log("checkedok");
+
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(this.password, salt);
-    this.set("password", hash);
+    this.password = hash;
   }
   next();
 });
 
 studentSchema.method("comparePassword", function (password) {
-  if (bcrypt.compareSync(password, this.password)) {
-    return true;
-  } else {
-    return false;
-  }
+  return bcrypt.compareSync(password, this.password);
 });
+
 export default mongoose.model("Student", studentSchema);
