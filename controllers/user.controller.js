@@ -40,7 +40,7 @@ export async function userLogin(req, res) {
             .status(200)
             .cookie("token", token, options)
             .cookie("refreshToken", refreshToken, options)
-            .json({ success: true, message: "logged in" });
+            .json({ success: true, message: "logged in" ,token: token});
         } else {
           return res
             .status(400)
