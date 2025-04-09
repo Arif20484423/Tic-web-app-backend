@@ -1,14 +1,14 @@
 {
     "roles":[
         {
-            "name":"TAP",
+            "name":"Tap",
             "permissions":[
                 "function3",
                 "function2"
             ]
         },
         {
-            "name":"TIC",
+            "name":"Tic",
             "permissions":[
                 "function1",
                 "function2"

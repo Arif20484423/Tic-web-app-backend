@@ -62,24 +62,30 @@ export async function userLogin(req, res) {
 }
 
 export async function userRegister(req, res) {
-  const p = await Person.create({
-    name: req.body.name,
-    gender: req.body.gender,
-  });
-  const s = await Student.create({
-    person: p._id,
-    batch: "67eeee05a8d245275b702712",
-    role: "Student",
-    rollNumber: req.body.rollNumber,
-    collegeEmail: req.body.email,
-    password: req.body.password,
-
-    tenth: 10,
-    twelfth: 10,
-    UG: 10,
-    PG: 10,
-  });
-  res.send("added");
+  try {
+    const p = await Person.create({
+      name: req.body.name,
+      gender: req.body.gender,
+    });
+    const s = await Student.create({
+      person: p._id,
+      batch: "67eeee05a8d245275b702712",
+      role: "Student",
+      rollNumber: req.body.rollNumber,
+      collegeEmail: req.body.email,
+      password: req.body.password,
+  
+      tenth: 10,
+      twelfth: 10,
+      UG: 10,
+      PG: 10,
+    });
+    res.send("added");
+  } catch (error) {
+    console.log("error")
+    return res.status(400).json({success:false,error:error})
+  }
+  
 }
 
 export async function userBatch(re, res) {
@@ -250,5 +256,41 @@ export async function userResetPassword(req, res) {
     }
   } else {
     return res.status(400).json({ success: false, message: "invalid link" });
+  }
+}
+
+
+export async function userRole(req,res){
+  res.status(200).json({success:true,role:req.role})
+}
+export async function userChangePassword(req, res) {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    try {
+      const data = matchedData(req);
+      const student = await Student.findById(req.id);
+      
+      
+      if (student.comparePassword(data.password)) {
+        student.password = data.newPassword;
+        await student.save();
+        return res
+          .status(200)
+          .json({ success: true, message: "password Changed" });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "Wrong current password" });
+      }
+    } catch (error) {
+      console.log("error")
+      return res
+      .status(400)
+      .json({ success: false, message: "invalid new password", error:error });
+    }
+  } else {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid details provided" });
   }
 }
