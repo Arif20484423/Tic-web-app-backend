@@ -5,7 +5,9 @@ import Batch from "../models/batch.model.js";
 import bcrypt from "bcryptjs";
 import ForgotToken from "../models/forgot-token.model.js";
 import crypto from "crypto";
-import { userBatchEntry, uploadMiddleware } from "../services/user.service.js";
+import multer from "multer";
+import csvParser from "csv-parser";
+import fs from "fs";
 
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens.js";
 import { mail } from "../utils/Mail.js";
@@ -50,6 +52,8 @@ export async function userLogin(req, res) {
           .json({ success: false, message: "User does not exists" });
       }
     } catch (error) {
+      console.log(error);
+      
       return res
         .status(500)
         .json({ success: false, message: "Some Error Occured", error: error });
@@ -89,7 +93,70 @@ export async function userBatch(re, res) {
   res.send("created");
 }
 
-export const batchEntry = [uploadMiddleware, userBatchEntry];
+
+const upload = multer({ dest: "uploads/" });
+
+export const uploadMiddleware = upload.single("file");
+
+export const userBatchEntry = async (req, res) => {
+  try {
+    const batchDetails = req.body;  
+    if (!batchDetails) {
+      return res.status(401).json({ message: "Invalid Batch details" });
+    }
+    const batch = await Batch.create({
+      session: batchDetails.session,
+        totalStudents: batchDetails.totalStudents,
+    });
+
+    const students = [];
+    const filePath = req.file.path;
+
+    fs.createReadStream(filePath)
+      .pipe(csvParser())
+      .on("data", async (row) => {
+        try {
+          const person = await Person.create({
+            name: row.name,
+            gender: row.gender || "Male",
+            email: row.email,
+            contact: row.contact,
+          });
+
+          const student = await Student.create({
+            person: person._id,
+            batch: batch._id,
+            role: "Student",
+            rollNumber: row.rollNumber,
+            collegeEmail: row.rollNumber+"@nitjsr.ac.in",
+            password: "Pass@123",
+            languages: [],
+            resume:   null,
+            domain: [],
+            gapYear: row.gapYear || 0,
+            tenth: row.tenth || 0,
+            twelfth: row.twelfth || 0,
+            UG: row.UG || 0,
+            PG: row.PG || 0,
+          });
+
+          students.push(student);
+        } catch (error) {
+          console.error("Error processing row:", row, error);
+        }
+      })
+      .on("end", () => {
+        fs.unlinkSync(filePath);
+        res.status(200).json({
+          message: "Batch entry completed",
+          studentsCreated: students.length,
+        });
+      });
+  } catch (error) {
+    console.error("Error in batch entry:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 export async function getUserDetails(req, res, next) {
   try {
