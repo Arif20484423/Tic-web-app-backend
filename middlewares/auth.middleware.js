@@ -5,8 +5,6 @@ import Student from "../models/student.model.js";
 import { mapToken } from "../controllers/user.controller.js";
 import { getPermissions } from "../utils/permissions.js";
 export function authenticateUser(req, res, next) {
-  // console.log(req);
-  console.log("Auth");
   if (req.cookies.token) {
     const response = getUser(req.cookies.token);
     if (response.success) {
@@ -20,12 +18,9 @@ export function authenticateUser(req, res, next) {
 }
 
 export async function refreshAccessToken(req, res, next) {
-  console.log(req.id);
   if (req.id) {
-    console.log("passed");
     next();
   } else {
-    console.log("notpassed");
     try {
       if (req.cookies.refreshToken) {
         const response1 = getUser(req.cookies.refreshToken);
@@ -59,16 +54,13 @@ export async function refreshAccessToken(req, res, next) {
 }
 
 export function checkPermission(permission) {
-  console.log("CHECKING")
-  return (req,res,next)=>{
+  return (req, res, next) => {
     const permissions = getPermissions(req.role);
-    console.log(permission+" "+permissions)
-    if(permissions.includes(permission)){
-        next();
+    console.log(permission + " " + permissions);
+    if (permissions.includes(permission)) {
+      next();
+    } else {
+      res.status(401).json({ message: "Access denied" });
     }
-    else{
-      res.status(401).json({message:"Access denied"})
-    }
-  }
-
+  };
 }
