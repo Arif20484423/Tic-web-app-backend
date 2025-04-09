@@ -8,8 +8,13 @@ import {
   setUserDetails,
   userSendMail,
   userResetPassword,
+
+  uploadMiddleware,
+  userBatchEntry
+
   userChangePassword,
   userRole,
+
 } from "../controllers/user.controller.js";
 import {
   authenticateUser,
@@ -26,6 +31,9 @@ router.post(
   body("password").trim().isLength({ min: 6 }),
   userLogin
 );
+
+router.post("/batchentry",uploadMiddleware,
+  userBatchEntry );
 
 router.get("/mail", (req, res) => {
   mail("subject", "content", "arif7862016a@gmail.com");
