@@ -10,7 +10,7 @@ import {
   userResetPassword,
 
   uploadMiddleware,
-  userBatchEntry
+  userBatchEntry,
 
   userChangePassword,
   userRole,
