@@ -22,7 +22,7 @@ app.set("views",path.join(__dirname,"/public/views"))
 
 
 
-app.use("/api/v1/users",userRouter)
+app.use("/api/v1/user",userRouter)
 app.use("/api/v1/trials",trials)
 
 

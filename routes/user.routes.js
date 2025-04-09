@@ -8,8 +8,13 @@ import {
   setUserDetails,
   userSendMail,
   userResetPassword,
+
   uploadMiddleware,
-  userBatchEntry
+  userBatchEntry,
+
+  userChangePassword,
+  userRole,
+
 } from "../controllers/user.controller.js";
 import {
   authenticateUser,
@@ -41,6 +46,7 @@ router.post(
   userSendMail
 );
 
+//when forgot password logged out
 router.post(
   "/reset-password",
   body("token").exists().trim().notEmpty(),
@@ -70,6 +76,13 @@ router.get("/x", (req, res) => {
   res.redirect("http://localhost:4000/api/v1/users");
 });
 
+router.get("/role",userRole)
+router.post(
+  "/change-password",
+  body("password").exists().trim().notEmpty(),
+  body("newPassword").exists().trim().notEmpty(),
+  userChangePassword
+);
 router.post("/register", userRegister);
 router.post("/batch", userBatch);
 export default router;
