@@ -40,7 +40,7 @@ export async function userLogin(req, res) {
             .status(200)
             .cookie("token", token, options)
             .cookie("refreshToken", refreshToken, options)
-            .json({ success: true, message: "logged in" });
+            .json({ success: true, message: "logged in" ,token: "Not Needed"});
         } else {
           return res
             .status(400)
@@ -166,7 +166,7 @@ export const userBatchEntry = async (req, res) => {
 
 export async function getUserDetails(req, res, next) {
   try {
-    const user = await Student.findById(req.id, "-password -refreshToken -role")
+    const user = await Student.findById(req.id, "-password -refreshToken")
       .populate("person")
       .populate("batch");
     return res.status(200).json({ success: true, data: user });

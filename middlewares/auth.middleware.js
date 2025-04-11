@@ -37,15 +37,15 @@ export async function refreshAccessToken(req, res, next) {
             next();
           } else {
             console.log("ref no comp");
-            res.redirect("/login");
+            res.redirect("http://localhost:3000/signin");
           }
         } else {
           console.log("ref exp");
-          res.redirect("/login");
+          res.redirect("http://localhost:3000/signin");
         }
       } else {
         console.log(" no refresh");
-        res.redirect("/login");
+        res.redirect("http://localhost:3000/signin");
       }
     } catch (error) {
       console.log("tryerror");
