@@ -18,14 +18,12 @@ const mastersheetSchema = mongoose.Schema({
     },
     altEmail: {
         type: String,
-        unique: true,
         lowercase: true,
         trim: true,
         match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"]
     },
     contactNumber: {
         type: String,
-        required: true
     },
     altContactNumber: {
         type: String,
