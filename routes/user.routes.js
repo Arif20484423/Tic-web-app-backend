@@ -1,5 +1,18 @@
 import express from "express";
 import { body } from "express-validator";
+import masterRouter from "./master.router.js";
+import { mail } from "../utils/Mail.js";
+import {
+  setUserDetailsValidator,
+  userChangePasswordValidator,
+  userLoginValidator,
+  userResetPasswordValidator,
+} from "../validators/user.validator.js";
+import {
+  authenticateUser,
+  checkPermission,
+  refreshAccessToken,
+} from "../middlewares/auth.middleware.js";
 import {
   userLogin,
   userRegister,
@@ -8,37 +21,19 @@ import {
   setUserDetails,
   userSendMail,
   userResetPassword,
-
   uploadMiddleware,
   userBatchEntry,
-
   userChangePassword,
   userRole,
-
 } from "../controllers/user.controller.js";
-import {
-  authenticateUser,
-  checkPermission,
-  refreshAccessToken,
-} from "../middlewares/auth.middleware.js";
-import { mail } from "../utils/Mail.js";
 
 const router = express.Router();
 
-router.post(
-  "/login",
-  body("rollNumber").exists().trim().notEmpty(),
-  body("password").trim().isLength({ min: 6 }),
-  userLogin
-);
+router.post("/login", userLoginValidator, userLogin);
 
-router.post("/batchentry",uploadMiddleware,
-  userBatchEntry );
 
-router.get("/mail", (req, res) => {
-  mail("subject", "content", "arif7862016a@gmail.com");
-  res.send("sending");
-});
+//permission remaining
+router.post("/batchentry", uploadMiddleware, userBatchEntry);
 
 router.post(
   "/mail",
@@ -47,13 +42,7 @@ router.post(
 );
 
 //when forgot password logged out
-router.post(
-  "/reset-password",
-  body("token").exists().trim().notEmpty(),
-  body("user").exists().trim().notEmpty(),
-  body("password").exists().trim().notEmpty(),
-  userResetPassword
-);
+router.post("/reset-password", userResetPasswordValidator, userResetPassword);
 
 router.use(authenticateUser);
 router.use(refreshAccessToken);
@@ -62,27 +51,27 @@ router.get("/", (req, res) => {
   res.send("home");
 });
 
+
 router.get("/details", checkPermission("getUserDetails"), getUserDetails);
 router.post(
   "/details",
   checkPermission("setUserDetails"),
-  body("personid").exists().trim().notEmpty(),
-  body("studentid").exists().trim().notEmpty(),
-  body("person").exists(),
-  body("student").exists(),
+  setUserDetailsValidator,
   setUserDetails
 );
-router.get("/x", (req, res) => {
-  res.redirect("http://localhost:4000/api/v1/users");
-});
 
-router.get("/role",userRole)
+router.get("/role", checkPermission("userRole"), userRole);
 router.post(
   "/change-password",
-  body("password").exists().trim().notEmpty(),
-  body("newPassword").exists().trim().notEmpty(),
+  userChangePasswordValidator,
   userChangePassword
 );
+
+
+// remaining checkpermission
 router.post("/register", userRegister);
 router.post("/batch", userBatch);
+
+// routes
+router.use("/mastersheet", masterRouter);
 export default router;

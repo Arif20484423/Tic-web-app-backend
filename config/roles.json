@@ -3,22 +3,25 @@
         {
             "name":"Tap",
             "permissions":[
-                "function3",
-                "function2"
+                "getUserDetails",
+                "setUserDetails",
+                "userRole"
             ]
         },
         {
             "name":"Tic",
             "permissions":[
-                "function1",
-                "function2"
+               "getUserDetails",
+                "setUserDetails",
+                "userRole"
             ]
         },
         {
             "name":"Student",
             "permissions":[
                 "getUserDetails",
-                "setUserDetails"
+                "setUserDetails",
+                "userRole"
             ]
         }
         

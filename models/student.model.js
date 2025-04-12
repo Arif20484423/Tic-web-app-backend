@@ -30,7 +30,7 @@ const studentSchema = mongoose.Schema({
   collegeEmail: {
     type: String,
     unique: true,
-    sparse: true,
+    required:true,
     lowercase: true,
     trim: true,
     match: [
