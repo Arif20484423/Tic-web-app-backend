@@ -9,5 +9,5 @@ router.get("/", checkPermission("masterGetDetail"), masterGetDetail)
 
 router.post("/", checkPermission("masterAddDetail"), masterAddDetailValidator, masterAddDetail);
 
-router.post("/:id", checkPermission("masterAddDetail"), masterEditDetailValidator, masterEditDetail);
+router.post("/:id", checkPermission("masterEditDetail"), masterEditDetailValidator, masterEditDetail);
 export default router

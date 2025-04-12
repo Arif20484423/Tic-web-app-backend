@@ -41,12 +41,14 @@ export async function masterEditDetail(req, res) {
       if (info) {
         try {
           await MasterSheet.findByIdAndUpdate(id, req.body);
-          return res.status(200).json({ success: true, message: "updated successfully" });
+          return res
+            .status(200)
+            .json({ success: true, message: "updated successfully" });
         } catch (error) {
           return res.status(400).json({
             success: false,
             message: "some error occured",
-            error:error
+            error: error,
           });
         }
       } else {
