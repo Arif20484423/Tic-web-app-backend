@@ -56,7 +56,7 @@ export async function refreshAccessToken(req, res, next) {
 export function checkPermission(permission) {
   return (req, res, next) => {
     const permissions = getPermissions(req.role);
-    console.log(permission + " " + permissions);
+    
     if (permissions.includes(permission)) {
       next();
     } else {

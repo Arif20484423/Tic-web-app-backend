@@ -1,12 +1,13 @@
 import express from "express"
-import { masterAddDetailValidator } from "../validators/master.validator.js";
-import { masterAddDetail } from "../controllers/master.controller.js";
+import { masterAddDetailValidator, masterEditDetailValidator } from "../validators/master.validator.js";
+import { masterAddDetail, masterEditDetail, masterGetDetail } from "../controllers/master.controller.js";
+import { checkPermission } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
 
-router.get("/",(req,res)=>{
-    res.send("working")
-})
+router.get("/", checkPermission("masterGetDetail"), masterGetDetail)
 
-router.post("/",masterAddDetailValidator,masterAddDetail);
+router.post("/", checkPermission("masterAddDetail"), masterAddDetailValidator, masterAddDetail);
+
+router.post("/:id", checkPermission("masterAddDetail"), masterEditDetailValidator, masterEditDetail);
 export default router

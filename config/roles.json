@@ -5,7 +5,9 @@
             "permissions":[
                 "getUserDetails",
                 "setUserDetails",
-                "userRole"
+                "userRole",
+                "masterAddDetail",
+                "masterGetDetail"
             ]
         },
         {
@@ -13,7 +15,9 @@
             "permissions":[
                "getUserDetails",
                 "setUserDetails",
-                "userRole"
+                "userRole",
+                "masterAddDetail",
+                "masterGetDetail"
             ]
         },
         {
@@ -21,7 +25,8 @@
             "permissions":[
                 "getUserDetails",
                 "setUserDetails",
-                "userRole"
+                "userRole",
+                "masterAddDetail"
             ]
         }
         
