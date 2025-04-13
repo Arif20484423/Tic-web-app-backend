@@ -35,7 +35,7 @@ export async function userLogin(req, res) {
           await Student.findByIdAndUpdate(student._id, {
             refreshToken: refreshToken,
           });
-          const options = { httpOnly: true, secure: true };
+          const options = { httpOnly: true, secure: false };
           return res
             .status(200)
             .cookie("token", token, options)
@@ -53,7 +53,7 @@ export async function userLogin(req, res) {
       }
     } catch (error) {
       console.log(error);
-      
+
       return res
         .status(500)
         .json({ success: false, message: "Some Error Occured", error: error });
@@ -78,7 +78,7 @@ export async function userRegister(req, res) {
       rollNumber: req.body.rollNumber,
       collegeEmail: req.body.email,
       password: req.body.password,
-  
+
       tenth: 10,
       twelfth: 10,
       UG: 10,
@@ -86,10 +86,9 @@ export async function userRegister(req, res) {
     });
     res.send("added");
   } catch (error) {
-    console.log("error")
-    return res.status(400).json({success:false,error:error})
+    console.log("error");
+    return res.status(400).json({ success: false, error: error });
   }
-  
 }
 
 export async function userBatch(re, res) {
@@ -99,20 +98,19 @@ export async function userBatch(re, res) {
   res.send("created");
 }
 
-
 const upload = multer({ dest: "uploads/" });
 
 export const uploadMiddleware = upload.single("file");
 
 export const userBatchEntry = async (req, res) => {
   try {
-    const batchDetails = req.body;  
+    const batchDetails = req.body;
     if (!batchDetails) {
       return res.status(401).json({ message: "Invalid Batch details" });
     }
     const batch = await Batch.create({
       session: batchDetails.session,
-        totalStudents: batchDetails.totalStudents,
+      totalStudents: batchDetails.totalStudents,
     });
 
     const students = [];
@@ -134,10 +132,10 @@ export const userBatchEntry = async (req, res) => {
             batch: batch._id,
             role: "Student",
             rollNumber: row.rollNumber,
-            collegeEmail: row.rollNumber+"@nitjsr.ac.in",
+            collegeEmail: row.rollNumber + "@nitjsr.ac.in",
             password: "Pass@123",
             languages: [],
-            resume:   null,
+            resume: null,
             domain: [],
             gapYear: row.gapYear || 0,
             tenth: row.tenth || 0,
@@ -326,9 +324,8 @@ export async function userResetPassword(req, res) {
   }
 }
 
-
-export async function userRole(req,res){
-  res.status(200).json({success:true,role:req.role})
+export async function userRole(req, res) {
+  res.status(200).json({ success: true, role: req.role });
 }
 export async function userChangePassword(req, res) {
   const result = validationResult(req);
@@ -336,8 +333,7 @@ export async function userChangePassword(req, res) {
     try {
       const data = matchedData(req);
       const student = await Student.findById(req.id);
-      
-      
+
       if (student.comparePassword(data.password)) {
         student.password = data.newPassword;
         await student.save();
@@ -350,14 +346,33 @@ export async function userChangePassword(req, res) {
           .json({ success: false, message: "Wrong current password" });
       }
     } catch (error) {
-      console.log("error")
-      return res
-      .status(400)
-      .json({ success: false, message: "invalid new password", error:error });
+      console.log("error");
+      return res.status(400).json({
+        success: false,
+        message: "invalid new password",
+        error: error,
+      });
     }
   } else {
     return res
       .status(400)
       .json({ success: false, message: "Invalid details provided" });
   }
+}
+
+export async function userGetStudents(req, res) {
+  const data = await Student.aggregate([
+    {
+      $match: { rollNumber: "2023PGCSCA043" },
+    },
+    {
+      $lookup: {
+        from: "people",
+        localField: "person",
+        foreignField: "_id",
+        as: "xyz",
+      },
+    },
+  ]);
+  res.send(data);
 }

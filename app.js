@@ -1,8 +1,6 @@
 import express from "express"
 import cookieParser  from "cookie-parser"
 import userRouter from "./routes/user.routes.js"
-import { authenticateUser } from "./middlewares/auth.middleware.js"
-import trials from "./routes/trials.route.js"
 import path from "node:path"
 export const app = express()
 import { dirname } from 'node:path';
@@ -23,6 +21,6 @@ app.set("views",path.join(__dirname,"/public/views"))
 
 
 app.use("/api/v1/user",userRouter)
-app.use("/api/v1/trials",trials)
+
 
 

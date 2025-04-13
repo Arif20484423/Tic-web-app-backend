@@ -3,22 +3,34 @@
         {
             "name":"Tap",
             "permissions":[
-                "function3",
-                "function2"
+                "getUserDetails",
+                "setUserDetails",
+                "userRole",
+                "userGetStudents",
+                "masterAddDetail",
+                "masterGetDetail",
+                "masterEditDetail"
             ]
         },
         {
             "name":"Tic",
             "permissions":[
-                "function1",
-                "function2"
+               "getUserDetails",
+                "setUserDetails",
+                "userRole",
+                "userGetStudents",
+                "masterAddDetail",
+                "masterGetDetail",
+                "masterEditDetail"
             ]
         },
         {
             "name":"Student",
             "permissions":[
                 "getUserDetails",
-                "setUserDetails"
+                "setUserDetails",
+                "userRole",
+                "masterAddDetail"
             ]
         }
         
