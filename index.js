@@ -1,6 +1,6 @@
-import {} from "dotenv/config"
+import {} from "dotenv/config";
 import { app } from "./app.js";
-import {connectDb} from "./db/connect-db.js";
+import { connectDb } from "./db/connect-db.js";
 
 connectDb()
   .then((result) => {
@@ -12,5 +12,3 @@ connectDb()
   .catch((err) => {
     console.log("Error connecting database");
   });
-
-
