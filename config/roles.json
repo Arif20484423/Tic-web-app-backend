@@ -6,6 +6,7 @@
                 "getUserDetails",
                 "setUserDetails",
                 "userRole",
+                "userGetStudents",
                 "masterAddDetail",
                 "masterGetDetail",
                 "masterEditDetail"
@@ -17,6 +18,7 @@
                "getUserDetails",
                 "setUserDetails",
                 "userRole",
+                "userGetStudents",
                 "masterAddDetail",
                 "masterGetDetail",
                 "masterEditDetail"

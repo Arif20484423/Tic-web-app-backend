@@ -21,6 +21,7 @@ export async function masterAddDetail(req, res) {
   }
 }
 
+// filters remaining
 export async function masterGetDetail(req, res) {
   try {
     const masterDetail = await MasterSheet.find({});

@@ -347,17 +347,32 @@ export async function userChangePassword(req, res) {
       }
     } catch (error) {
       console.log("error");
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "invalid new password",
-          error: error,
-        });
+      return res.status(400).json({
+        success: false,
+        message: "invalid new password",
+        error: error,
+      });
     }
   } else {
     return res
       .status(400)
       .json({ success: false, message: "Invalid details provided" });
   }
+}
+
+export async function userGetStudents(req, res) {
+  const data = await Student.aggregate([
+    {
+      $match: { rollNumber: "2023PGCSCA043" },
+    },
+    {
+      $lookup: {
+        from: "people",
+        localField: "person",
+        foreignField: "_id",
+        as: "xyz",
+      },
+    },
+  ]);
+  res.send(data);
 }

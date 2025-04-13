@@ -25,6 +25,7 @@ import {
   userBatchEntry,
   userChangePassword,
   userRole,
+  userGetStudents,
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -67,6 +68,8 @@ router.post(
   userChangePassword
 );
 
+
+router.get("/students",checkPermission("userGetStudents"),userGetStudents)
 
 // remaining checkpermission
 router.post("/register", userRegister);
