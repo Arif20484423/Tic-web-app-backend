@@ -16,6 +16,7 @@ export function mapToken(user) {
   return generateAccessToken({
     id: user._id,
     rollNumber: user.rollNumber,
+    name:user.person.name,
     role: user.role,
   });
 }
@@ -25,7 +26,8 @@ export async function userLogin(req, res) {
   if (result.isEmpty()) {
     const data = matchedData(req);
     try {
-      const student = await Student.findOne({ rollNumber: data.rollNumber });
+      const student = await Student.findOne({ rollNumber: data.rollNumber }).populate("person");
+      console.log(student)
       if (student) {
         if (student.comparePassword(data.password)) {
           const token = mapToken(student);

@@ -11,6 +11,7 @@ export function authenticateUser(req, res, next) {
       const user = response.user;
       req.id = user.id;
       req.rollNumber = user.rollNumber;
+      req.name=user.name;
       req.role = user.role;
     }
   }
