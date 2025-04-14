@@ -16,7 +16,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/public/views"));
 
 app.get("/", (req, res) => {
-  res.send("link working");
+  res.status(200).json({message:"link working"});
 });
 
 app.use("/api/v1/user", userRouter);
