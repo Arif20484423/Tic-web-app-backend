@@ -37,7 +37,7 @@ export async function userLogin(req, res) {
           });
           const options = {
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite:"none"
           };
           return res
