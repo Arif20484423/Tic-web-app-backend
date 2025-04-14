@@ -18,6 +18,7 @@ export function authenticateUser(req, res, next) {
 }
 
 export async function refreshAccessToken(req, res, next) {
+  const signinUrl = process.env.Frontend_URL+"/signin";
   if (req.id) {
     next();
   } else {
@@ -37,15 +38,15 @@ export async function refreshAccessToken(req, res, next) {
             next();
           } else {
             console.log("ref no comp");
-            return res.redirect("http://localhost:3000/signin");
+            return res.redirect(signinUrl);
           }
         } else {
           console.log("ref exp");
-          return res.redirect("http://localhost:3000/signin");
+          return res.redirect(signinUrl);
         }
       } else {
         console.log(" no refresh");
-        return res.redirect("http://localhost:3000/signin");
+        return res.redirect(signinUrl);
       }
     } catch (error) {
       console.log("tryerror");
