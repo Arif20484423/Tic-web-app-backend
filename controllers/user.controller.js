@@ -59,7 +59,7 @@ export async function userLogin(req, res) {
         .json({ success: false, message: "Some Error Occured", error: error });
     }
   } else {
-    res
+   return  res
       .status(400)
       .json({ success: false, message: "Invalid details provided" });
   }

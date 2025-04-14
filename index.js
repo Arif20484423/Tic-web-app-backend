@@ -5,7 +5,7 @@ import { connectDb } from "./db/connect-db.js";
 connectDb()
   .then((result) => {
     console.log(result);
-    app.listen(4000, () => {
+    app.listen(process.env.PORT, () => {
       console.log("Server started at port 4000");
     });
   })
