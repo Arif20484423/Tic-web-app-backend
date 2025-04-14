@@ -326,7 +326,7 @@ export async function userResetPassword(req, res) {
         .json({ success: false, message: "some error occurred", error: error });
     }
   } else {
-    return res.status(400).json({ success: false, message: "invalid link" });
+    return res.status(400).json({ success: false, message: "invalid link", error:result.array() });
   }
 }
 
