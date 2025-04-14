@@ -35,12 +35,15 @@ export async function userLogin(req, res) {
           await Student.findByIdAndUpdate(student._id, {
             refreshToken: refreshToken,
           });
-          const options = { httpOnly: true, secure: false };
+          const options = {
+            httpOnly: true,
+            secure: true
+          };
           return res
             .status(200)
             .cookie("token", token, options)
             .cookie("refreshToken", refreshToken, options)
-            .json({ success: true, message: "logged in" ,token: "Not Needed"});
+            .json({ success: true, message: "logged in", token: "Not Needed" });
         } else {
           return res
             .status(400)
@@ -59,7 +62,7 @@ export async function userLogin(req, res) {
         .json({ success: false, message: "Some Error Occured", error: error });
     }
   } else {
-   return  res
+    return res
       .status(400)
       .json({ success: false, message: "Invalid details provided" });
   }
