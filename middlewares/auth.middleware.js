@@ -18,7 +18,6 @@ export function authenticateUser(req, res, next) {
 }
 
 export async function refreshAccessToken(req, res, next) {
-  const signinUrl = process.env.Frontend_URL+"/signin";
   if (req.id) {
     next();
   } else {
@@ -38,15 +37,15 @@ export async function refreshAccessToken(req, res, next) {
             next();
           } else {
             console.log("ref no comp");
-            return res.redirect(signinUrl);
+            return res.status(400).json({success:false,message:"Unauthorized! Please redirect to /signin",redirect:true,redirectTo:"/signin"})
           }
         } else {
           console.log("ref exp");
-          return res.redirect(signinUrl);
+          return res.status(400).json({success:false,message:"Unauthorized! Please redirect to /signin",redirect:true,redirectTo:"/signin"})
         }
       } else {
         console.log(" no refresh");
-        return res.redirect(signinUrl);
+        return res.status(400).json({success:false,message:"Unauthorized! Please redirect to /signin",redirect:true,redirectTo:"/signin"})
       }
     } catch (error) {
       console.log("tryerror");
