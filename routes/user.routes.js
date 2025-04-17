@@ -80,7 +80,7 @@ router.post("/batch", userBatch);
 
 router.post(
   "/batchentry",
-  checkPermission(userBatchEntry),
+  checkPermission("userBatchEntry"),
   uploadMiddleware,
   userBatchEntry
 );
