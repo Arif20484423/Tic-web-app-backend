@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import masterRouter from "./master.router.js";
-import { mail } from "../utils/Mail.js";
+
 import {
   setUserDetailsValidator,
   userChangePasswordValidator,
@@ -33,7 +33,8 @@ const router = express.Router();
 router.post("/login", userLoginValidator, userLogin);
 
 //permission remaining
-router.post("/batchentry", uploadMiddleware, userBatchEntry);
+
+// router.post("/batchentry", uploadMiddleware, userBatchEntry);
 
 router.post(
   "/mail",
@@ -48,12 +49,10 @@ router.use(authenticateUser);
 router.use(refreshAccessToken);
 router.get("/", (req, res) => {
   // console.log(req);
-  return res
-    .status(200)
-    .json({
-      success: true,
-      data: { name: req.name, rollNumber: req.rollNumber, role: req.role },
-    });
+  return res.status(200).json({
+    success: true,
+    data: { name: req.name, rollNumber: req.rollNumber, role: req.role },
+  });
 });
 
 router.get("/details", checkPermission("getUserDetails"), getUserDetails);
@@ -75,8 +74,16 @@ router.get("/students", checkPermission("userGetStudents"), userGetStudents);
 
 // remaining checkpermission
 router.post("/register", userRegister);
+
+//trial may be removed
 router.post("/batch", userBatch);
 
+router.post(
+  "/batchentry",
+  checkPermission(userBatchEntry),
+  uploadMiddleware,
+  userBatchEntry
+);
 // routes
 router.use("/mastersheet", masterRouter);
 export default router;
