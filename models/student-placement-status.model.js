@@ -8,7 +8,8 @@ const studentPlacementStatusSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        default: "Not Placed",
+        enum:["On Campus","Off Campus","Not Placed"],
+        default:"Not Placed"
     },
     package: {
         type: Number,
@@ -26,10 +27,6 @@ const studentPlacementStatusSchema = mongoose.Schema({
     domain: {
         type: String,
         optional: true
-    },
-    onCampus: {
-        type: Boolean,
-        required: true
     }
 });
 
