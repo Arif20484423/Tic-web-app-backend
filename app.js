@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
+import todoRouter from "./routes/todo.routes.js";
 import path from "node:path";
 export const app = express();
 import { dirname } from "node:path";
@@ -20,3 +21,4 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/todo", todoRouter);

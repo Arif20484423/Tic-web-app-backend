@@ -10,7 +10,8 @@ export const roles =[
             "masterAddDetail",
             "masterGetDetail",
             "masterEditDetail",
-            "userBatchEntry"
+            "userBatchEntry",
+            "accessTodo"
         ]
     },
     {
@@ -23,7 +24,8 @@ export const roles =[
             "masterAddDetail",
             "masterGetDetail",
             "masterEditDetail",
-            "userBatchEntry"
+            "userBatchEntry",
+            "accessTodo"
         ]
     },
     {
