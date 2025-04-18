@@ -67,7 +67,7 @@ const studentSchema = mongoose.Schema({
     required: true,
   },
   twelfth: {
-    type: Number,
+    type:   Number,
     required: true,
   },
   UG: {

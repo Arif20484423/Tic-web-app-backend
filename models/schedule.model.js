@@ -15,15 +15,20 @@ const schedule = mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Student",
         required: true
     },
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Company",
-        required: true
+        required: false
+    },
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active"
     },
 
 });
 
-export default mongoose.model("Schedule", batchSchema);
+export default mongoose.model("Schedule", schedule);
