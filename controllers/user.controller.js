@@ -388,18 +388,34 @@ export async function userChangePassword(req, res) {
 }
 
 export async function userGetStudents(req, res) {
-  const data = await Student.aggregate([
-    {
-      $match: { rollNumber: "2023PGCSCA043" },
-    },
-    {
-      $lookup: {
-        from: "people",
-        localField: "person",
-        foreignField: "_id",
-        as: "xyz",
+  try {
+    const data = await Student.aggregate([
+      {
+        $lookup: {
+          from: "people",
+          localField: "person",
+          foreignField: "_id",
+          as: "persondetails",
+        },
       },
-    },
-  ]);
-  res.send(data);
+      {
+        $lookup: {
+          from: "batches",
+          localField: "batch",
+          foreignField: "_id",
+          as: "batchdetails",
+        },
+      },
+      {
+        $project: { password: 0 },
+      },
+    ]);
+    res.status(200).json({
+      success: true,
+      message: "Data fetched successfully",
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Some error occurred" });
+  }
 }
