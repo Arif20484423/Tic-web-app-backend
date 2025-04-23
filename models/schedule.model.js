@@ -18,6 +18,10 @@ const schedule = mongoose.Schema({
         ref: "Student",
         required: true
     },
+    completedAt: {
+        type: Date,
+        default: null
+    },
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Company",
