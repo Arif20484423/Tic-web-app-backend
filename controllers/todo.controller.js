@@ -51,9 +51,19 @@ export const getAllmySchedule = async (req, res) => {
     }
 }
 
+export const deleteAllCompletedSchedule = async (req,res) => {
+    try {
+        const schedule = await scheduleModel.deleteMany({status: "inactive"});
+        res.status(200).json({ message: "All completed schedule deleted", schedule });
+    } catch (error) {
+        res.status(500).json({ message: "Error getting schedule", error });
+
+    }
+}
+
 export const getAllCompletedSchedule = async (req, res) => {
     try {
-        const schedule = await scheduleModel.find({ status: "inactive" }).populate("createdBy", "name rollNumber")
+        const schedule = await scheduleModel.find({ status: "inactive" }).populate("createdBy", "name rollNumber").sort({ completedAt: -1 });
         if (!schedule) {
             return res.status(404).json({ message: "No schedule found" });
         }
@@ -77,7 +87,7 @@ export const getAllScheduleSortByDate = async (req, res) => {
 export const completeSchedule = async (req, res) => {
     try {
         const { id } = req.body;
-        const schedule = await scheduleModel.findByIdAndUpdate(id, { status: "inactive" }, { new: true });
+        const schedule = await scheduleModel.findByIdAndUpdate(id, { status: "inactive",completedAt: Date.now() }, { new: true });
         if (!schedule) {
             return res.status(404).json({ message: "Schedule not found" });
         }
